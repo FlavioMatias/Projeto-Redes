@@ -1,5 +1,7 @@
-<div style="text-align: center;">
-    <h1>Projeto Redes - Monitoramento de Hardware</h1>
+<div align="center">
+
+# Projeto Redes - Monitoramento de Hardware
+
 </div>
 
 ## Descrição  
