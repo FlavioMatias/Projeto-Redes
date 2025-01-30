@@ -1,4 +1,6 @@
-# **Projeto Redes - Monitoramento de Hardware**
+<div style="text-align: center;">
+    # **Projeto Redes - Monitoramento de Hardware**
+</div>
 
 ## Descrição  
 
