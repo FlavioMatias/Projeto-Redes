@@ -1,6 +1,6 @@
-<p align="center">
-    <strong><h1>Projeto Redes - Monitoramento de Hardware</h1></strong>
-</p>
+<div style="text-align: center;">
+    <h1>Projeto Redes - Monitoramento de Hardware</h1>
+</div>
 
 ## Descrição  
 
