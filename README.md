@@ -73,6 +73,6 @@ python client.py
 **Desenvolvido por:**
     [Flavio Matias]()
     [Gustavo Tavares]()
-    [Gustavo Maia]()
+    [Gustavo Maia](https://github.com/gusttavokr)
     
 **Orientação:** Professor **Ivanilson**  

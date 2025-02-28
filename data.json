@@ -1,0 +1,25 @@
+{
+    "192.168.1.105": {
+        "hostname": "matiasPC",
+        "sistema_operacional": "Linux",
+        "arquitetura": "64bit",
+        "usuario": "matiasPC",
+        "processadores": 12,
+        "frequencia_cpu_mhz": 4006.0,
+        "ram_total_gb": 7.18,
+        "ram_livre_gb": 1.82,
+        "disco_total_gb": 82.06,
+        "disco_livre_gb": 36.14,
+        "uso_cpu_percent": 1.1,
+        "uso_ram_percent": 74.4,
+        "uso_disco_percent": 53.6,
+        "temperatura_cpu": null,
+        "ip_local": "127.0.1.1",
+        "ip_publico": "170.82.253.46",
+        "mac_address": "2d:90",
+        "velocidade_rede_mbps": "Desconhecida",
+        "latencia_google_ms": 200.0,
+        "nivel_bateria": 100.0,
+        "carregando": false
+    }
+}
