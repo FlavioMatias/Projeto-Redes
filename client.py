@@ -51,25 +51,47 @@ class Client:
         uso_ram = psutil.virtual_memory().percent
         uso_disco = psutil.disk_usage('/').percent
 
-        temperaturas = psutil.sensors_temperatures()
+        # Verifica se a função sensors_temperatures() está disponível (exclusivo do Linux)
         temp_processador = None
-        if 'coretemp' in temperaturas:
-            temp_processador = round(sum(temp.current for temp in temperaturas['coretemp']) / len(temperaturas['coretemp']), 1)
+        if hasattr(psutil, 'sensors_temperatures'):
+            temperaturas = psutil.sensors_temperatures()
+            if 'coretemp' in temperaturas:
+                temp_processador = round(sum(temp.current for temp in temperaturas['coretemp']) / len(temperaturas['coretemp']), 1)
+        else:
+            temp_processador = "Indisponível (não suportado no Windows)"
 
         ip_local = socket.gethostbyname(socket.gethostname())
         ip_publico = Client.get_public_ip()
         mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 8)][::-1])
-        velocidade_rede = psutil.net_if_stats()['Wi-Fi'].speed if 'Wi-Fi' in psutil.net_if_stats() else "Desconhecida"
 
+        # Verifica se a interface de rede 'Wi-Fi' está disponível (pode variar no Windows)
+        velocidade_rede = "Desconhecida"
+        if 'Wi-Fi' in psutil.net_if_stats():
+            velocidade_rede = psutil.net_if_stats()['Wi-Fi'].speed
+        else:
+            # Tenta obter a velocidade da primeira interface de rede disponível
+            interfaces = psutil.net_if_stats()
+            for interface in interfaces:
+                if interfaces[interface].isup:
+                    velocidade_rede = interfaces[interface].speed
+                    break
+
+        # Tenta obter a latência do ping (pode não funcionar no Windows sem permissões)
+        latencia = "Indisponível"
         try:
             ping_google = psutil.subprocess.run(["ping", "-c", "1", "8.8.8.8"], capture_output=True, text=True)
             latencia = float([x for x in ping_google.stdout.split("\n") if "time=" in x][0].split("time=")[1].split(" ")[0])
         except:
             latencia = "Indisponível"
 
-        bateria = psutil.sensors_battery()
-        nivel_bateria = round(bateria.percent, 1) if bateria else "Sem bateria"
-        carregando = bateria.power_plugged if bateria else False
+        # Informações sobre bateria (pode não estar disponível em desktops)
+        nivel_bateria = "Sem bateria"
+        carregando = False
+        if hasattr(psutil, 'sensors_battery'):
+            bateria = psutil.sensors_battery()
+            if bateria:
+                nivel_bateria = round(bateria.percent, 1)
+                carregando = bateria.power_plugged
 
         return {
             "hostname": platform.node(),
@@ -118,10 +140,10 @@ class Client:
                 json_message = json.dumps(dados_sistema)
 
                 # Criptografa os dados
-                dados_encriptados = cipher_suite.encrypt(json_message.encode())
+                dados_criptografados = cipher_suite.encrypt(json_message.encode())
 
                 # Envia os dados criptografados
-                tcp_sock.send(dados_encriptados)
+                tcp_sock.send(dados_criptografados)
                 print(f"Cliente: Dados enviados para o servidor {server_ip}")
                 tcp_sock.close()
             except Exception as e:
