@@ -2,10 +2,10 @@ import streamlit as st
 #import pandas as pd
 
 class Operações:
-    def main(self, df):
+    def main(df):
 
         st.header("Selecione alguma das operações:")
-        st.subheader(f"{self}")
+        st.subheader("Operações")
 
         t1, t2, t3 = st.tabs(["Apagar dados", "Desligar o pc", "Abrir Janelas"])
 
@@ -21,7 +21,7 @@ class Operações:
     def apagarDados(df):
         st.selectbox(
             "Escolha um cliente", 
-            df['clientes'].tolist()  # Convertendo a coluna 'clientes' para uma lista
+            df['Cliente'].tolist()  # Convertendo a coluna 'clientes' para uma lista
         )
 
         if st.button("Apagar"):

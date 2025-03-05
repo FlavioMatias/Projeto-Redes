@@ -7,16 +7,11 @@ import uuid
 import requests
 from cryptography.fernet import Fernet
 
+CryptKey = 'XXHQzo1N9eKRkpw3dhLurZ6c2qK9w5W7smB2UmFXTl0='
 BROADCAST_PORT = 50000
 TCP_PORT = 50001
 
 class Client:
-    @staticmethod
-    def load_key():
-        """Carrega a chave de criptografia do arquivo."""
-        with open("chave.key", "rb") as filekey:
-            return filekey.read()
-
     @staticmethod
     def get_server_ip():
         """Escuta o broadcast uma única vez e obtém o IP do servidor."""
@@ -69,7 +64,6 @@ class Client:
         if 'Wi-Fi' in psutil.net_if_stats():
             velocidade_rede = psutil.net_if_stats()['Wi-Fi'].speed
         else:
-            # Tenta obter a velocidade da primeira interface de rede disponível
             interfaces = psutil.net_if_stats()
             for interface in interfaces:
                 if interfaces[interface].isup:
@@ -126,23 +120,18 @@ class Client:
     @staticmethod
     def send_data(server_ip):
         """Envia um JSON com dados do sistema para o servidor a cada 5 segundos."""
-        # Carrega a chave de criptografia
-        chave = Client.load_key()
-        cipher_suite = Fernet(chave)
+        cipher_suite = Fernet(CryptKey)
 
         while True:
             try:
                 tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 tcp_sock.connect((server_ip, TCP_PORT))
 
-                # Coleta os dados do sistema
                 dados_sistema = Client.get_system_info()
                 json_message = json.dumps(dados_sistema)
 
-                # Criptografa os dados
                 dados_criptografados = cipher_suite.encrypt(json_message.encode())
 
-                # Envia os dados criptografados
                 tcp_sock.send(dados_criptografados)
                 print(f"Cliente: Dados enviados para o servidor {server_ip}")
                 tcp_sock.close()

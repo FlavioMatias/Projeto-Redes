@@ -7,18 +7,13 @@ import platform
 import subprocess
 from cryptography.fernet import Fernet  # Importando a biblioteca de criptografia
 
+CryptKey = 'XXHQzo1N9eKRkpw3dhLurZ6c2qK9w5W7smB2UmFXTl0='
 BROADCAST_PORT = 50000
 TCP_PORT = 50001
 BROADCAST_MESSAGE = "FGG".encode()
 DATA_FILE = "data.json"
 
 class Server:
-    @staticmethod
-    def load_key():
-        """Carrega a chave de criptografia do arquivo."""
-        with open("chave.key", "rb") as filekey:
-            return filekey.read()
-
     @staticmethod
     def liberar_portas():
         """Libera as portas fechando processos que estejam utilizando-as."""
@@ -59,9 +54,8 @@ class Server:
     @staticmethod
     def data_receive():
         """Abre um servidor TCP que recebe dados e salva em um arquivo JSON."""
-        # Carrega a chave de criptografia
-        chave = Server.load_key()
-        cipher_suite = Fernet(chave)
+
+        cipher_suite = Fernet(CryptKey)
 
         tcp_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
@@ -77,7 +71,6 @@ class Server:
                     # Descriptografa os dados recebidos
                     dados_descriptografados = cipher_suite.decrypt(data)
                     json_data = json.loads(dados_descriptografados.decode())
-                    print("Servidor: Dados recebidos:", json_data)
                     Server.save_data(addr[0], json_data)
                 except Exception as e:
                     print("Servidor: Erro ao decodificar ou descriptografar dados:", e)
@@ -111,5 +104,4 @@ class Server:
         while True:
             time.sleep(1)
 
-if __name__ == "__main__":
-    Server.start()
+Server.start()
