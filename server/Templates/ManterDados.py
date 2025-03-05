@@ -27,7 +27,6 @@ class Dados:
                     st.write(f"IP Local: {linha['IP Local']}")
                     st.write(f"IP Público: {linha['IP Público']}")
                     st.write(f"MAC Address: {linha['MAC Address']}")
-                    st.write(f"Velocidade da Rede: {linha['Velocidade Rede (Mbps)']} Mbps")
                     st.write(f"Latência para o Google: {linha['Latência Google (ms)']} ms")
                 with st.expander("Bateria"):
                     st.write(f"Nível da Bateria: {linha['Nível Bateria (%)']}%")

@@ -59,12 +59,12 @@ pip install -r requisitos.txt
 
 3️⃣ Inicie o sistema do servidor:  
 ```bash
-python main.py
+python server/app.py
 ```
 
 4️⃣ Inicie o cliente (em outra máquina ou terminal):  
 ```bash
-python client.py
+python client/client.py
 ```
 
 ---

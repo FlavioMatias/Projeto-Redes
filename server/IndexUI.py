@@ -30,7 +30,6 @@ class IndexUI:
             'IP Local': info['ip_local'],
             'IP Público': info['ip_publico'],
             'MAC Address': info['mac_address'],
-            'Velocidade Rede (Mbps)': info['velocidade_rede_mbps'],
             'Latência Google (ms)': info['latencia_google_ms'],
             'Nível Bateria (%)': info['nivel_bateria'],
             'Carregando': info['carregando']
