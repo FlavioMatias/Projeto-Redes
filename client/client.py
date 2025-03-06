@@ -101,6 +101,3 @@ class Client:
             Client.Data_Transfer()
         else:
             print("Cliente: Nenhum servidor encontrado. Encerrando.")
-
-if __name__ == "__main__":
-    Client.run()
