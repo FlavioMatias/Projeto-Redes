@@ -48,10 +48,16 @@ class Server:
     @staticmethod
     def broadcast_pings():
         """Envia pings em broadcast periodicamente."""
-        udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        interfaces = socket.getaddrinfo(host=socket.gethostname(), port=None, family=socket.AF_INET) # Obtem todas as interfaces de rede do computador
+        allips = [ip[-1][0] for ip in interfaces] # Obtem todos os IPs das interfaces de rede do computador
         while True:
-            udp_sock.sendto(BROADCAST_MESSAGE, ('<broadcast>', BROADCAST_PORT))
+            for ip in allips: # Para cada IP
+                print(f'Publicando em {ip}')
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) # Habilita o envio de pacotes de broadcast
+                sock.bind((ip,0))
+                sock.sendto(BROADCAST_MESSAGE, ("255.255.255.255", BROADCAST_PORT)) # Envia a mensagem com o ip e a porta do servidor para todos que estão na mesma rede do IP
+                sock.close()
             time.sleep(5)
 
     @staticmethod
