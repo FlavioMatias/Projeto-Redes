@@ -29,23 +29,9 @@ class APP:
     @staticmethod
     def setup_environment():
         """Configura o ambiente virtual e instala as dependências."""
-        venv_name = "venv"
-
-        if not os.path.exists(venv_name):
-            print("Criando ambiente virtual...")
-            subprocess.run([sys.executable, "-m", "venv", venv_name])
-
-        if platform.system() == "Windows":
-            activate_script = os.path.join(venv_name, "Scripts", "activate")
-            python_exec = os.path.join(venv_name, "Scripts", "python.exe")
-        else:  # Linux ou MacOS
-            activate_script = os.path.join(venv_name, "bin", "activate")
-            python_exec = os.path.join(venv_name, "bin", "python3")
-
         print("Instalando dependências...")
-        subprocess.run([python_exec, "-m", "pip", "install", "-r", "requirements.txt"])
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
 
-        return python_exec
 
     @staticmethod
     def Run():
@@ -59,7 +45,7 @@ class APP:
 
         python_exec = APP.setup_environment()
 
-        subprocess.Popen([python_exec, "client/client.py"])
+        subprocess.Popen([sys.executable, "client/client.py"])
 
 if __name__ == '__main__':
     APP.Run()

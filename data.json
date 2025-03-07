@@ -1,1 +1,24 @@
-{}
+{
+    "10.25.2.8": {
+        "hostname": "CNAT450875",
+        "sistema_operacional": "Windows",
+        "arquitetura": "64bit",
+        "usuario": "CNAT450875",
+        "processadores": 12,
+        "frequencia_cpu_mhz": 3301.0,
+        "uso_cpu_percent": 0.7,
+        "temperatura_cpu": "Indispon\u00edvel",
+        "ram_total_gb": 15.38,
+        "ram_livre_gb": 9.57,
+        "uso_ram_percent": 37.8,
+        "disco_total_gb": 236.31,
+        "disco_livre_gb": 32.39,
+        "uso_disco_percent": 86.3,
+        "ip_local": "10.25.2.8",
+        "ip_publico": "200.137.2.52",
+        "mac_address": "63:1e",
+        "latencia_google_ms": "Indispon\u00edvel",
+        "nivel_bateria": "Sem bateria",
+        "carregando": false
+    }
+}

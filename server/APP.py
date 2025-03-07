@@ -27,25 +27,8 @@ class APP:
         subprocess.run([sys.executable, "-m", "pipreqs.pipreqs", ".", "--encoding=utf8", "--force"], check=True)
 
     @staticmethod
-    def setup_environment():
-        """Configura o ambiente virtual e instala as dependências."""
-        venv_name = "venv"
-
-        if not os.path.exists(venv_name):
-            print("Criando ambiente virtual...")
-            subprocess.run([sys.executable, "-m", "venv", venv_name])
-
-        if platform.system() == "Windows":
-            activate_script = os.path.join(venv_name, "Scripts", "activate")
-            python_exec = os.path.join(venv_name, "Scripts", "python.exe")
-        else:  # Linux ou MacOS
-            activate_script = os.path.join(venv_name, "bin", "activate")
-            python_exec = os.path.join(venv_name, "bin", "python3")
-
-        print("Instalando dependências...")
-        subprocess.run([python_exec, "-m", "pip", "install", "-r", "requirements.txt"])
-
-        return python_exec
+    def install_requirements():
+        subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
     @staticmethod
     def Run():
@@ -57,13 +40,13 @@ class APP:
 
         APP.generate_requirements()
 
-        python_exec = APP.setup_environment()
+        APP.install_requirements()
 
         print("Iniciando Streamlit...")
-        subprocess.Popen([python_exec, "-m", "streamlit", "run", "server/IndexUI.py"])
+        subprocess.Popen([sys.executable, "-m", "streamlit", "run", "server/IndexUI.py"])
 
         print("Iniciando servidor...")
-        subprocess.Popen([python_exec, "server/Server.py"])
+        subprocess.Popen([sys.executable, "server/Server.py"])
 
 if __name__ == '__main__':
     APP.Run()
