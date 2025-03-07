@@ -3,14 +3,19 @@ import streamlit as st
 import json
 class Operações:
     def main(df):
-
         st.header("Selecione alguma das operações:")
         st.subheader("Operações")
 
+        # Abas para as operações
         t1, t2 = st.tabs(["doomsday RAM", "Desligar maquina"])
 
-        with t1 : Operações.doomsdayRAM(df)
-        with t2 : Operações.desligarmaquina(df)
+        with t1:
+
+            Operações.doomsdayRAM(df)
+
+        with t2:
+
+            Operações.desligarmaquina(df)
 
     def desligarmaquina(df):
         op = None

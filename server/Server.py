@@ -8,15 +8,15 @@ import subprocess
 from cryptography.fernet import Fernet
 
 # Configurações
-CryptKey = 'XXHQzo1N9eKRkpw3dhLurZ6c2qK9w5W7smB2UmFXTl0='  # Chave de criptografia
-BROADCAST_PORT = 50000  # Porta para broadcast UDP
-TCP_PORT = 50001  # Porta para conexão TCP
-BROADCAST_MESSAGE = "FGG".encode()  # Mensagem de broadcast
-DATA_FILE = "data.json"  # Arquivo para armazenar dados recebidos
-COMANDOS_FILE = "comandos.json"  # Arquivo para ler comandos pendentes
+CryptKey = 'XXHQzo1N9eKRkpw3dhLurZ6c2qK9w5W7smB2UmFXTl0=' 
+BROADCAST_PORT = 50000  
+TCP_PORT = 50001 
+BROADCAST_MESSAGE = "FGG".encode()  
+DATA_FILE = "data.json"  
+COMANDOS_FILE = "comandos.json"  
 
 class Server:
-    clientes_conectados = {}  # Dicionário para armazenar sockets de clientes conectados
+    clientes_conectados = {}  
 
     @staticmethod
     def liberar_portas():
@@ -48,15 +48,14 @@ class Server:
     @staticmethod
     def broadcast_pings():
         """Envia pings em broadcast periodicamente."""
-        interfaces = socket.getaddrinfo(host=socket.gethostname(), port=None, family=socket.AF_INET) # Obtem todas as interfaces de rede do computador
-        allips = [ip[-1][0] for ip in interfaces] # Obtem todos os IPs das interfaces de rede do computador
+        interfaces = socket.getaddrinfo(host=socket.gethostname(), port=None, family=socket.AF_INET) 
+        allips = [ip[-1][0] for ip in interfaces] 
         while True:
-            for ip in allips: # Para cada IP
-                print(f'Publicando em {ip}')
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) # Habilita o envio de pacotes de broadcast
+            for ip in allips:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  
+                sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1) 
                 sock.bind((ip,0))
-                sock.sendto(BROADCAST_MESSAGE, ("255.255.255.255", BROADCAST_PORT)) # Envia a mensagem com o ip e a porta do servidor para todos que estão na mesma rede do IP
+                sock.sendto(BROADCAST_MESSAGE, ("255.255.255.255", BROADCAST_PORT))
                 sock.close()
             time.sleep(5)
 
@@ -65,29 +64,22 @@ class Server:
         """Lida com a conexão de um cliente específico."""
         cipher_suite = Fernet(CryptKey)
         print(f"Conexão estabelecida com {addr}")
-
-        # Adiciona o cliente à lista de clientes conectados
         Server.clientes_conectados[addr[0]] = conn
 
         while True:
             try:
-                # Recebe dados do cliente
-                data = conn.recv(4096)
+                data = conn.recv(4096)  
                 if not data:
-                    break  # Encerra a conexão se não houver dados
-
-                # Descriptografa os dados recebidos
+                    break  
                 dados_descriptografados = cipher_suite.decrypt(data)
                 json_data = json.loads(dados_descriptografados.decode())
 
-                # Salva os dados do cliente no JSON
                 Server.save_data(addr[0], json_data)
 
             except Exception as e:
                 print(f"Erro ao lidar com o cliente {addr}: {e}")
                 break
 
-        # Remove o cliente da lista de clientes conectados e do JSON
         if addr[0] in Server.clientes_conectados:
             del Server.clientes_conectados[addr[0]]
         Server.remove_data(addr[0])
@@ -107,7 +99,6 @@ class Server:
 
         while True:
             conn, addr = tcp_sock.accept()
-            # Cria uma nova thread para lidar com o cliente
             threading.Thread(target=Server.handle_client, args=(conn, addr), daemon=True).start()
 
     @staticmethod
@@ -115,22 +106,18 @@ class Server:
         """Lê o arquivo JSON de comandos e envia os comandos aos clientes."""
         while True:
             try:
-                # Lê o arquivo de comandos
                 with open(COMANDOS_FILE, "r") as file:
                     comandos = json.load(file)
 
-                # Processa cada comando
                 for comando in comandos:
                     cliente = comando["cliente"]
                     cmd = comando["comando"]
 
-                    # Verifica se o cliente está conectado
                     if cliente in Server.clientes_conectados:
                         conn = Server.clientes_conectados[cliente]
                         Server.enviar_comando(conn, cliente, cmd)
                         print(f"Comando '{cmd}' enviado para o cliente {cliente}.")
 
-                # Limpa o arquivo de comandos após processar
                 with open(COMANDOS_FILE, "w") as file:
                     json.dump([], file)
 
@@ -141,7 +128,6 @@ class Server:
             except Exception as e:
                 print(f"Erro ao processar comandos: {e}")
 
-            # Espera um pouco antes de verificar novamente
             time.sleep(5)
 
     @staticmethod
@@ -167,18 +153,15 @@ class Server:
         else:
             all_data = {}
 
-        # Adiciona ou atualiza os dados do cliente
         all_data[client_ip] = data
 
-        # Remove clientes que não estão mais conectados
         connected_ips = Server.clientes_conectados.keys()
         all_data = {ip: all_data[ip] for ip in all_data if ip in connected_ips}
 
-        # Salva os dados atualizados no arquivo JSON
         with open(DATA_FILE, "w") as file:
             json.dump(all_data, file, indent=4)
 
-        print(f"Servidor: Dados do cliente {client_ip} armazenados em {DATA_FILE}")
+        print(f"Dados do cliente {client_ip} armazenados")
 
     @staticmethod
     def remove_data(client_ip):
@@ -200,7 +183,7 @@ class Server:
         with open(DATA_FILE, "w") as file:
             json.dump(all_data, file, indent=4)
 
-        print(f"Servidor: Dados do cliente {client_ip} removidos de {DATA_FILE}")
+        print(f"Dados do cliente {client_ip} removidos")
 
     @staticmethod
     def start():

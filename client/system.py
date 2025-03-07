@@ -18,7 +18,7 @@ class System:
 
     @staticmethod
     def get_cpu_info():
-        temp_processador = "Indisponível"
+        temp_processador = 0
         if hasattr(psutil, 'sensors_temperatures'):
             temperaturas = psutil.sensors_temperatures()
             if 'coretemp' in temperaturas:
@@ -52,12 +52,12 @@ class System:
     @staticmethod
     def get_network_info():
         mac_address = ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) for elements in range(0, 2*6, 8)][::-1])
-        latencia = "Indisponível"
+        latencia = 0
         try:
             ping_google = psutil.subprocess.run(["ping", "-c", "1", "8.8.8.8"], capture_output=True, text=True)
             latencia = float([x for x in ping_google.stdout.split("\n") if "time=" in x][0].split("time=")[1].split(" ")[0])
         except:
-            latencia = "Indisponível"
+            latencia = 0
         
         return {
             "ip_local": socket.gethostbyname(socket.gethostname()),

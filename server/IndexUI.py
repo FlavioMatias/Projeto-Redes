@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import json
@@ -17,7 +18,7 @@ class IndexUI:
             'Hostname': info['hostname'],
             'Sistema Operacional': info['sistema_operacional'],
             'Arquitetura': info['arquitetura'],
-            'Processadores': info['processadores'],
+            'processadores': info['processadores'],
             'Frequência CPU (MHz)': info['frequencia_cpu_mhz'],
             'Memória RAM Total (GB)': info['ram_total_gb'],
             'Memória RAM Livre (GB)': info['ram_livre_gb'],
@@ -39,20 +40,21 @@ class IndexUI:
     
     @classmethod
     def main(cls):
-        while True:
-            df = cls.carregar_dados()
-            op = st.sidebar.selectbox("MENU:", ["Dados", "Médias", "Operações"])
-            
-            if op == "Dados":
+        st.sidebar.title("Menu")
+        op = st.sidebar.selectbox("Selecione uma opção:", ["Dados", "Médias", "Operações"])
+  
+        df = cls.carregar_dados()
+        
+        match op:
+            case "Dados":
                 Dados.main(df)
-            elif op == "Médias":
+            case "Médias":
                 Médias.main(df)
-            elif op == "Operações":
+            case "Operações":
                 Operações.main(df)
-            else:
-                Dados.main(df[df["Cliente"] == op])
-            
-            time.sleep(5)
-            st.rerun()  
+            case _:
+                pass
+        time.sleep(10)
+        st.rerun()
 
 IndexUI.main()
