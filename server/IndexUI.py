@@ -18,7 +18,7 @@ class IndexUI:
             'Hostname': info['hostname'],
             'Sistema Operacional': info['sistema_operacional'],
             'Arquitetura': info['arquitetura'],
-            'processadores': info['processadores'],
+            'Processadores': info['processadores'],
             'Frequência CPU (MHz)': info['frequencia_cpu_mhz'],
             'Memória RAM Total (GB)': info['ram_total_gb'],
             'Memória RAM Livre (GB)': info['ram_livre_gb'],
@@ -41,20 +41,23 @@ class IndexUI:
     @classmethod
     def main(cls):
         st.sidebar.title("Menu")
-        op = st.sidebar.selectbox("Selecione uma opção:", ["Dados", "Médias", "Operações"])
-  
+
+        if "pagina_atual" not in st.session_state:
+            st.session_state.pagina_atual = "Dados"
+
+        op = st.sidebar.selectbox("Selecione uma opção:", ["Dados", "Médias", "Operações"], index=["Dados", "Médias", "Operações"].index(st.session_state.pagina_atual))
+
+        if op != st.session_state.pagina_atual:
+            st.session_state.pagina_atual = op
+            st.rerun()
+
         df = cls.carregar_dados()
-        
-        match op:
-            case "Dados":
-                Dados.main(df)
-            case "Médias":
-                Médias.main(df)
-            case "Operações":
-                Operações.main(df)
-            case _:
-                pass
-        time.sleep(10)
-        st.rerun()
+
+        if op == "Dados":
+            Dados.main(df)
+        elif op == "Médias":
+            Médias.main(df)
+        elif op == "Operações":
+            Operações.main(df)
 
 IndexUI.main()
