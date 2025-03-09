@@ -6,6 +6,7 @@ import time
 from Templates.ManterDados import Dados
 from Templates.ManterOperações import Operações
 from Templates.ManterMédias import Médias
+from Templates.ManterServidor import Servidor
 
 class IndexUI:
     @classmethod
@@ -45,7 +46,7 @@ class IndexUI:
         if "pagina_atual" not in st.session_state:
             st.session_state.pagina_atual = "Dados"
 
-        op = st.sidebar.selectbox("Selecione uma opção:", ["Dados", "Médias", "Operações"], index=["Dados", "Médias", "Operações"].index(st.session_state.pagina_atual))
+        op = st.sidebar.selectbox("Selecione uma opção:", ["Servidor", "Dados", "Médias", "Operações"], index=["Servidor", "Dados", "Médias", "Operações"].index(st.session_state.pagina_atual))
 
         if op != st.session_state.pagina_atual:
             st.session_state.pagina_atual = op
@@ -59,5 +60,7 @@ class IndexUI:
             Médias.main(df)
         elif op == "Operações":
             Operações.main(df)
+        elif op == "Servidor":
+            Servidor.main(df)
 
 IndexUI.main()

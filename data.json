@@ -1,1 +1,24 @@
-{}
+{
+    "127.0.0.1": {
+        "hostname": "codespaces-9d6233",
+        "sistema_operacional": "Linux",
+        "arquitetura": "64bit",
+        "usuario": "codespaces-9d6233",
+        "processadores": 2,
+        "frequencia_cpu_mhz": 0.0,
+        "uso_cpu_percent": 27.3,
+        "temperatura_cpu": 0,
+        "ram_total_gb": 7.74,
+        "ram_livre_gb": 5.07,
+        "uso_ram_percent": 34.6,
+        "disco_total_gb": 31.33,
+        "disco_livre_gb": 18.73,
+        "uso_disco_percent": 37.0,
+        "ip_local": "127.0.0.1",
+        "ip_publico": "135.237.130.231",
+        "mac_address": "1c:7f",
+        "latencia_google_ms": 0,
+        "nivel_bateria": "Sem bateria",
+        "carregando": false
+    }
+}
