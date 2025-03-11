@@ -6,13 +6,12 @@ from cryptography.fernet import Fernet
 
 from system import System
 
-# Chave de criptografia (deve ser a mesma no servidor e no cliente)
 CryptKey = 'XXHQzo1N9eKRkpw3dhLurZ6c2qK9w5W7smB2UmFXTl0='
 BROADCAST_PORT = 50000  # Porta para broadcast UDP
 TCP_PORT = 50001  # Porta para conexão TCP
 
 class Client:
-    tcp_sock = None  # Socket TCP para comunicação com o servidor
+    tcp_sock = None 
 
     @staticmethod
     def get_server_ip():
@@ -75,7 +74,7 @@ class Client:
                 if server_ip:
                     Client.connect(server_ip)
                 else:
-                    continue  # Tentar novamente mais tarde
+                    continue 
             
             try:
                 dados_sistema = System.get_system_info()

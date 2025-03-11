@@ -61,6 +61,6 @@ class IndexUI:
         elif op == "Operações":
             Operações.main(df)
         elif op == "Servidor":
-            Servidor.main(df)
+            Servidor.main()
 
 IndexUI.main()

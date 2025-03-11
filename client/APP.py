@@ -2,7 +2,8 @@ import subprocess
 import os
 import sys
 import platform
-
+import signal
+import time
 
 class APP:
     @staticmethod
@@ -32,7 +33,6 @@ class APP:
         print("Instalando dependências...")
         subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
 
-
     @staticmethod
     def Run():
         """Configura o ambiente e executa o aplicativo."""
@@ -43,9 +43,28 @@ class APP:
 
         APP.generate_requirements()
 
-        python_exec = APP.setup_environment()
+        APP.setup_environment()
 
-        subprocess.Popen([sys.executable, "client/client.py"])
+        # Inicia o subprocesso
+        process = subprocess.Popen([sys.executable, "client/client.py"])
+
+        # Função para lidar com o sinal de interrupção (Ctrl+C)
+        def signal_handler(sig, frame):
+            print("\nInterrompendo o subprocesso...")
+            process.terminate()  # Envia SIGTERM para o subprocesso
+            process.wait()       # Espera o subprocesso terminar
+            print("Subprocesso interrompido. Saindo...")
+            sys.exit(0)
+
+        # Configura o handler para o sinal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, signal_handler)
+
+        # Mantém o script principal em execução enquanto o subprocesso estiver ativo
+        try:
+            while process.poll() is None:
+                time.sleep(0.5)  # Espera para evitar uso excessivo da CPU
+        except KeyboardInterrupt:
+            signal_handler(signal.SIGINT, None)
 
 if __name__ == '__main__':
     APP.Run()

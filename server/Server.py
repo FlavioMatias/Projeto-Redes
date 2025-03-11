@@ -5,6 +5,7 @@ import time
 import os
 import platform
 import subprocess
+import requests
 from cryptography.fernet import Fernet
 
 # Configurações
@@ -14,9 +15,24 @@ TCP_PORT = 50001
 BROADCAST_MESSAGE = "FGG".encode()  
 DATA_FILE = "data.json"  
 COMANDOS_FILE = "comandos.json"  
+STATUS_FILE = "status.json"
 
 class Server:
     clientes_conectados = {}  
+
+    @staticmethod
+    def obter_ip_publico():
+        """Obtém o endereço IP público usando uma API externa."""
+        try:
+            resposta = requests.get("https://api.ipify.org?format=json", timeout=5)
+            if resposta.status_code == 200:
+                return resposta.json().get("ip", "N/A")
+            else:
+                print("Erro ao obter IP público: Status code", resposta.status_code)
+                return "N/A"
+        except Exception as e:
+            print(f"Erro ao obter IP público: {e}")
+            return "N/A"
 
     @staticmethod
     def liberar_portas():
@@ -175,15 +191,36 @@ class Server:
         else:
             all_data = {}
 
-        # Remove o cliente do JSON
         if client_ip in all_data:
             del all_data[client_ip]
 
-        # Salva os dados atualizados no arquivo JSON
         with open(DATA_FILE, "w") as file:
             json.dump(all_data, file, indent=4)
 
         print(f"Dados do cliente {client_ip} removidos")
+
+    @staticmethod
+    def coletar_status_servidor():
+        """Coleta informações do servidor e salva em um arquivo JSON."""
+        status = {
+            "ip": Server.obter_ip_publico(),
+            "broadcast_port": BROADCAST_PORT,
+            "tcp_port": TCP_PORT,
+            "clientes_conectados": list(Server.clientes_conectados.keys()),
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+        with open(STATUS_FILE, "w") as file:
+            json.dump(status, file, indent=4)
+
+        print(f"Status do servidor salvo em {STATUS_FILE}")
+
+    @staticmethod
+    def monitorar_status():
+        """Monitora e atualiza o status do servidor periodicamente."""
+        while True:
+            Server.coletar_status_servidor()
+            time.sleep(10)  
 
     @staticmethod
     def start():
@@ -192,6 +229,7 @@ class Server:
         threading.Thread(target=Server.broadcast_pings, daemon=True).start()
         threading.Thread(target=Server.data_receive, daemon=True).start()
         threading.Thread(target=Server.processar_comandos, daemon=True).start()
+        threading.Thread(target=Server.monitorar_status, daemon=True).start()  
         
         while True:
             time.sleep(1)

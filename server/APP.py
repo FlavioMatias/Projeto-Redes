@@ -2,7 +2,8 @@ import subprocess
 import os
 import sys
 import platform
-
+import signal
+import time
 
 class APP:
     @staticmethod
@@ -28,6 +29,8 @@ class APP:
 
     @staticmethod
     def install_requirements():
+        """Instala as dependências listadas no requirements.txt."""
+        print("Instalando dependências...")
         subprocess.run(["pip", "install", "-r", "requirements.txt"])
 
     @staticmethod
@@ -42,11 +45,33 @@ class APP:
 
         APP.install_requirements()
 
+        # Inicia o Streamlit
         print("Iniciando Streamlit...")
-        subprocess.Popen([sys.executable, "-m", "streamlit", "run", "server/IndexUI.py"])
+        streamlit_process = subprocess.Popen([sys.executable, "-m", "streamlit", "run", "server/IndexUI.py"])
 
+        # Inicia o servidor
         print("Iniciando servidor...")
-        subprocess.Popen([sys.executable, "server/Server.py"])
+        server_process = subprocess.Popen([sys.executable, "server/Server.py"])
+
+        # Função para lidar com o sinal de interrupção (Ctrl+C)
+        def signal_handler(sig, frame):
+            print("\nInterrompendo subprocessos...")
+            streamlit_process.terminate()  # Envia SIGTERM para o processo do Streamlit
+            server_process.terminate()     # Envia SIGTERM para o processo do servidor
+            streamlit_process.wait()       # Espera o processo do Streamlit terminar
+            server_process.wait()          # Espera o processo do servidor terminar
+            print("Subprocessos interrompidos. Saindo...")
+            sys.exit(0)
+
+        # Configura o handler para o sinal SIGINT (Ctrl+C)
+        signal.signal(signal.SIGINT, signal_handler)
+
+        # Mantém o script principal em execução enquanto os subprocessos estiverem ativos
+        try:
+            while streamlit_process.poll() is None or server_process.poll() is None:
+                time.sleep(0.5)  # Espera para evitar uso excessivo da CPU
+        except KeyboardInterrupt:
+            signal_handler(signal.SIGINT, None)
 
 if __name__ == '__main__':
     APP.Run()
